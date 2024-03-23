@@ -37,21 +37,21 @@ IAT – Implicit Association Test
 #
 
 STIMULI = {
-    'attributes': {
-        'pos': ['amusement', 'fun', 'friendship', 'happyness', 'joy'],
-        'neg': ['anger', 'hate', 'fear', 'panic', 'sickness']
+    'atributos': {
+        'positivas': ['alegría', 'amor', 'paz', 'maravilloso', 'placer', 'glorioso'^,'risa', 'feliz'],
+        'negativas': ['agonía', 'terrible', 'horrible', 'desagradable', 'malvado', 'malísimo', 'fallo', 'dolor']
     },
-    'concepts': {
-        'canidae': ['dog', 'wolf', 'coyote', 'fox', 'jackal'],
-        'felidae': ['house cat', 'tiger', 'lynx', 'wildcat', 'cougar']
+    'conceptos': {
+        'español': ['español', 'murciano', 'canario', 'madrileño', 'andaluz', 'gallego'],
+        'inmigrante': ['inmigrante', 'extranjero', 'árabe', 'africano', 'asiático', 'latino']
     }
 }
 
 STIMULI_LABELS = {
-    ('attributes', 'pos'): 'Positive words',
-    ('attributes', 'neg'): 'Negative words',
-    ('concepts', 'canidae'): 'Canidae',
-    ('concepts', 'felidae'): 'Felidae',
+    ('atributos', 'positivas'): 'Palabras Positivas',
+    ('atributos', 'negativas'): 'Palabras Negativas',
+    ('conceptos', 'español'): 'Español',
+    ('conceptos', 'inmigrante'): 'Inmigrante',
 }
 
 #
@@ -62,71 +62,71 @@ BLOCKS = [
     {   # 1
         'label': 'Practice 1',
         'n': 10,      # this must match the number of stimuli per side
-        'left': [('concepts', 'felidae')],
-        'right': [('concepts', 'canidae')],
+        'izquierda': [('conceptos', 'español')],
+        'derecha': [('conceptos', 'inmigrante')],
         'is_practice': True
     },
     {   # 2
         'label': 'Practice 2',
         'n': 10,
-        'left': [('attributes', 'neg')],
-        'right': [('attributes', 'pos')],
+        'izquierda': [('atributos', 'negativas')],
+        'derecha': [('atributos', 'positivas')],
         'is_practice': True
     },
     {   # 3
         'label': 'Test 1',
         'n': 20,
-        'left': [
-            ('attributes', 'neg'),
-            ('concepts', 'felidae'),
+        'izquierda': [
+            ('atributos', 'negativas'),
+            ('conceptos', 'español'),
         ],
-        'right': [
-            ('attributes', 'pos'),
-            ('concepts', 'canidae'),
+        'derecha': [
+            ('atributos', 'positivas'),
+            ('conceptos', 'inmigrante'),
         ]
     },
     {   # 4: same as 3
         'label': 'Test 2',
         'n': 20,
-        'left': [
-            ('attributes', 'neg'),
-            ('concepts', 'felidae'),
+        'izquierda': [
+            ('atributos', 'negativas'),
+            ('conceptos', 'español'),
         ],
-        'right': [
-            ('attributes', 'pos'),
-            ('concepts', 'canidae'),
+        'derecha': [
+            ('atributos', 'positivas'),
+            ('conceptos', 'inmigrante'),
         ]
     },
     {   # 5
         'label': 'Practice 3 (reversed)',
         'n': 10,
-        'left': [('concepts', 'canidae')],
-        'right': [('concepts', 'felidae')],
+        'izquierda': [('conceptos', 'inmigrante')],
+        'derecha': [('conceptos', 'español')],
         'is_practice': True,
-        'notice': 'WATCH OUT, the categories switch sides!',
+        'notice': 'CUIDADO, las categorías se han cambiado de sitio!',
     },
     {  # 6
         'label': 'Test 3',
         'n': 20,
-        'left': [
-            ('attributes', 'neg'),
-            ('concepts', 'canidae'),
+        'izquierda': [
+            ('atributos', 'negativas'),
+            ('conceptos', 'inmigrante'),
         ],
-        'right': [
-            ('attributes', 'pos'),
-            ('concepts', 'felidae'),
+        'derecha': [
+            ('atributos', 'positivas'),
+            ('conceptos', 'español'),
         ]
     },
     {  # 7: same as 6
         'label': 'Test 4',
         'n': 20,
-        'left': [
-            ('attributes', 'neg'),
-            ('concepts', 'canidae'),
+        'izquierda': [
+            ('atributos', 'negativas'),
+            ('conceptos', 'inmigrante'),
         ],
-        'right': [
-            ('attributes', 'pos'),
-            ('concepts', 'felidae'),
+        'derecha': [
+            ('atributos', 'positivas'),
+            ('conceptos', 'español'),
         ]
     },
 ]
@@ -136,8 +136,8 @@ class Constants(BaseConstants):
     name_in_url = 'iat'
     players_per_group = None
     num_rounds = len(BLOCKS)                  # number of blocks to play
-    capture_keycodes = {'left': ('KeyE', 'E'),
-                        'right': ('KeyI', 'I')}
+    capture_keycodes = {'izquierda': ('KeyE', 'E'),
+                        'derecha': ('KeyI', 'I')}
     next_trial_delay_ms = 250                 # delay between trials in millisec.
 
 
@@ -155,7 +155,7 @@ class Subsession(BaseSubsession):
 
             # create stimuli: class (attrib./concept) and level (e.g. pos./neg.) for left and right side
             stimuli = []
-            for side in ('left', 'right'):
+            for side in ('izquierda', 'derecha'):
                 for stim_class, stim_lvl in block_def[side]:
                     stim_vals = STIMULI[stim_class][stim_lvl]   # concrete stimuli words
                     n_vals = len(stim_vals)

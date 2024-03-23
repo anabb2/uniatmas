@@ -1,46 +1,42 @@
-{% extends "iat/Page.html" %}
+{% extends "iat/Página.html" %}
 {% load otree static %}
 
 {% block title %}{% endblock %}
 
 {% block app_styles %}
+    {{ block.super }}
 
-{{ block.super }}
+    <style>
+        table.stimuli {
+            margin-bottom: 1em;
+        }
 
-<style>
+        table.stimuli td,
+        table.stimuli th {
+            border: 1px solid gray;
+            border-collapse: collapse;
+            padding: 0.2em;
+        }
 
-table.stimuli {
-    margin-bottom: 1em;
-}
-
-table.stimuli td, table.stimuli th {
-    border: 1px solid gray;
-    border-collapse: collapse;
-    padding: 0.2em;
-}
-
-table.stimuli th {
-    background: lightgray;
-}
-
-</style>
-
+        table.stimuli th {
+            background: lightgray;
+        }
+    </style>
 {% endblock %}
-
 
 {% block content %}
     <p>
-        We will show you several words that you should assign to the respective categories.
+        Te mostraremos varias palabras que debes asignar a las respectivas categorías.
 
-        Please press either the key <span class="key">{{ Constants.capture_keycodes.left.1 }}</span> or the key
-        <span class="key">{{ Constants.capture_keycodes.right.1 }}</span> on your keyboard.<br>
-        You should assign the following words to the following categories:
+        Por favor, presiona la tecla <span class="key">{{ Constants.capture_keycodes.left.1 }}</span> o la tecla
+        <span class="key">{{ Constants.capture_keycodes.right.1 }}</span> en tu teclado.<br>
+        Debes asignar las siguientes palabras a las siguientes categorías:
     </p>
 
     <table class="stimuli">
         <tr>
-            <th>Category</th>
-            <th>Word</th>
+            <th>Categoría</th>
+            <th>Palabra</th>
         </tr>
         {% for stim in stimuli %}
             <tr>
@@ -51,9 +47,9 @@ table.stimuli th {
     </table>
 
     <p>
-        There are {{ Constants.num_rounds }} parts for which the instructions change. Please stay alert!
+        Hay {{ Constants.num_rounds }} partes para las cuales las instrucciones cambian. ¡Por favor, mantente alerta!
     </p>
 
     {% next_button %}
-
 {% endblock %}
+

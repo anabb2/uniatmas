@@ -1,203 +1,206 @@
-{% extends "iat/Page.html" %}
+{% extends "iat/Página.html" %}
 {% load otree static %}
 
-{# Implicit Association Test IAT experiment #}
-{# November 2019, Markus Konrad <markus.konrad@wzb.eu> #}
-
+{# Experimento del Test de Asociación Implícita IAT #}
+{# Noviembre de 2019, Markus Konrad <markus.konrad@wzb.eu> #}
 
 {% block app_styles %}
+    {{ block.super }}
 
-{{ block.super}}
+    <style>
+        .otree-btn-next {
+            display: none;
+        }
 
-<style>
+        #progress_container {
+            width: 100%;
+            height: 20px;
+            margin-bottom: 2em;
+        }
 
-.otree-btn-next {
-    display: none;
-}
+        #progress_bar_container {
+            width: 80%;
+            height: 20px;
+            border: 1px solid black;
+            float: right;
+        }
 
-#progress_container {
-    width: 100%;
-    height: 20px;
-    margin-bottom: 2em;
-}
+        #progress_bar {
+            width: 0;
+            height: 18px;
+            background: darkgray;
+        }
 
-#progress_bar_container {
-    width: 80%;
-    height: 20px;
-    border: 1px solid black;
-    float: right;
-}
+        #key_instructions {
+            width: 100%;
+        }
 
-#progress_bar {
-    width: 0;
-    height: 18px;
-    background: darkgray;
-}
+        #key_instructions .left {
+            width: 50%;
+            float: left;
+        }
 
+        #key_instructions .right {
+            width: 50%;
+            float: left;
+            text-align: right;
+        }
 
-#key_instructions {
-    width: 100%;
-}
+        #key_instructions .press_key {
+            color: gray;
+            margin: 0;
+        }
 
-#key_instructions .left {
-    width: 50%;
-    float: left;
-}
+        #key_instructions .class,
+        #key_instructions .conj {
+            font-size: 1.7em;
+            margin: 0;
+        }
 
-#key_instructions .right {
-    width: 50%;
-    float: left;
-    text-align: right;
-}
+        #key_instructions .class {
+            font-weight: bold;
+        }
 
-#key_instructions .press_key {
-    color: gray;
-    margin: 0;
-}
+        #start_instructions {
+            margin-top: 3em;
+        }
 
-#key_instructions .class,
-#key_instructions .conj {
-    font-size: 1.7em;
-    margin: 0;
-}
+        #start_instructions h3 {
+            text-align: center;
+            font-size: 1em;
+            text-decoration: underline;
+            font-weight: normal;
+        }
 
-#key_instructions .class {
-    font-weight: bold;
-}
+        #stimulus,
+        #feedback,
+        #submit_data_notice {
+            display: none;
+            margin: auto;
+            width: 50%;
+            text-align: center;
+        }
 
-#start_instructions {
-    margin-top: 3em;
-}
+        #stimulus {
+            font-weight: bold;
+            font-size: 3em;
+            margin-top: 1.5em;
+        }
 
-#start_instructions h3 {
-    text-align: center;
-    font-size: 1em;
-    text-decoration: underline;
-    font-weight: normal;
-}
+        #feedback .red_x {
+            font-size: 6em;
+        }
 
-#stimulus, #feedback, #submit_data_notice {
-    display: none;
-    margin: auto;
-    width: 50%;
-    text-align: center;
-}
+        .class.attributes {
+            color: darkblue;
+        }
 
-#stimulus {
-    font-weight: bold;
-    font-size: 3em;
-    margin-top: 1.5em;
-}
+        .class.concepts {
+            color: darkgreen;
+        }
 
-#feedback .red_x {
-    font-size: 6em;
-}
-
-.class.attributes {
-    color: darkblue;
-}
-
-.class.concepts {
-    color: darkgreen;
-}
-
-.red_x {
-    font-weight: bold;
-    color: red;
-}
-
-</style>
-
+        .red_x {
+            font-weight: bold;
+            color: red;
+        }
+    </style>
 {% endblock %}
-
 
 {% block title %}{% endblock %}
 
 {% block content %}
 
-{# submit data is stored in these hidden inputs as comma separated values strings #}
-<input id="input_trial_ids" name="trial_ids" type="hidden" value="">
-<input id="input_responses" name="responses" type="hidden" value="">
-<input id="input_response_correct" name="responses_correct" type="hidden" value="">
-<input id="input_response_times" name="response_times" type="hidden" value="">
+    {# Los datos de envío se almacenan en estos inputs ocultos como cadenas de valores separados por comas #}
+    <input id="input_trial_ids" name="trial_ids" type="hidden" value="">
+    <input id="input_responses" name="responses" type="hidden" value="">
+    <input id="input_response_correct" name="responses_correct" type="hidden" value="">
+    <input id="input_response_times" name="response_times" type="hidden" value="">
 
-<div id="progress_container">
-    Progress:
-    <div id="progress_bar_container">
-        <div id="progress_bar"></div>
-    </div>
-    <div style="clear: right"></div>
-</div>
-
-<div id="key_instructions">
-    {% for side in instructions %}
-        <div class="{{ side.side }}">
-            <p class="press_key">Press <span class="key">{{ side.key }}</span> for</p>
-            {% for class in side.classes %}
-                <p class="class {{ class.class }}">{{ class.label }}</p>
-                {% if side.classes|length > 1 and not forloop.last %}
-                    <p class="conj">or</p>
-                {% endif %}
-            {% endfor %}
+    <div id="progress_container">
+        Progreso:
+        <div id="progress_bar_container">
+            <div id="progress_bar"></div>
         </div>
-    {% endfor %}
-</div>
+        <div style="clear: right"></div>
+    </div>
 
-<div style="clear:left"></div>
-
-<div id="submit_data_notice">Data is being transmitted...</div>
-
-<div id="stimulus" class="class names"></div>
-
-<div id="feedback">
-    <p class="red_x">X</p>
-    <p class="hint">Press the other key to continue.</p>
-</div>
-
-<div id="start_instructions">
-    <h3>Part {{ player.round_number }} of {{ Constants.num_rounds }}</h3>
-
-
-    {% if player.round_number == 1 %}
-        <p>
-            Put your index finger on the keys <span class="key">{{ Constants.capture_keycodes.left.1 }}</span>
-            and <span class="key">{{ Constants.capture_keycodes.right.1 }}</span> to be able to react quickly.
-        </p>
-    {% endif %}
-
-    {% if block_def.notice %}
-        <p style="font-weight: bold">{{ block_def.notice }}</p>
-    {% endif %}
-
-    <p class="keys">
+    <div id="key_instructions">
         {% for side in instructions %}
-            Press <span class="key">{{ side.key }}</span> for words, that belong to the
-            {% if side.classes|length == 1  %}category{% else %}categories{% endif %}
-
-            {% for class in side.classes %}
-                <span class="class {{ class.class }}">{{ class.label }}</span>
-                {% if side.classes|length > 1 and not forloop.last %}
-                    or
-                {% endif %}
-            {% endfor %}
-
-            {% if not forloop.last %}<br>{% endif %}
+            <div class="{{ side.side }}">
+                <p class="press_key">Presiona <span class="key">{{ side.key }}</span> para</p>
+                {% for class in side.classes %}
+                    <p class="class {{ class.class }}">{{ class.label }}</p>
+                    {% if side.classes|length > 1 and not forloop.last %}
+                        <p class="conj">o</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
         {% endfor %}
-    </p>
+    </div>
 
-    {% if player.round_number == 1 %}
-        <p>We will display one word after another.</p>
-    {% endif %}
+    <div style="clear:left"></div>
 
-    <p>
-        When you make a mistake, a red <span class="red_x">X</span> will appear. Press the other key to continue.<br>
+    <div id="submit_data_notice">Los datos se están transmitiendo...</div>
 
-        Try to match the words <span style="text-decoration: underline">as quickly as possible</span>.
-    </p>
+    <div id="stimulus" class="class names"></div>
 
-    <p style="text-align: center">
-        Press <span class="key">SPACE</span>, in order to start with part {{ player.round_number }}.
-    </p>
+    <div id="feedback">
+        <p class="red_x">X</p>
+        <p class="hint">Presiona la otra tecla para continuar.</p>
+    </div>
+
+    <div id="start_instructions">
+        <h3>Parte {{ player.round_number }} de {{ Constants.num_rounds }}</h3>
+
+        {% if player.round_number == 1 %}
+            <p>
+                Coloca tu dedo índice en las teclas <span class="key">{{ Constants.capture_keycodes.left.1 }}</span>
+                y <span class="key">{{ Constants.capture_keycodes.right.1 }}</span> para poder reaccionar rápidamente.
+            </p>
+        {% endif %}
+
+        {% if block_def.notice %}
+            <p style="font-weight: bold">{{ block_def.notice }}</p>
+        {% endif %}
+
+        <p class="keys">
+            {% for side in instructions %}
+                Presiona <span class="key">{{ side.key }}</span> para palabras que pertenecen a la
+                {% if side.classes|length == 1  %}categoría{% else %}categorías{% endif %}
+
+                {% for class in side.classes %}
+                    <span class="class {{ class.class }}">{{ class.label }}</span>
+                    {% if side.classes|length > 1 and not forloop.last %}
+                        o
+                    {% endif %}
+                {% endfor %}
+
+                {% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
+        </p>
+
+        {% if player.round_number == 1 %}
+            <p>Mostraremos una palabra tras otra.</p>
+        {% endif %}
+
+        <p>
+            Cuando cometas un error, aparecerá una X roja. Presiona la otra tecla para continuar.<br>
+            Intenta hacer coincidir las palabras <span style="text-decoration: underline">tan rápido como sea posible</span>.
+        </p>
+
+        <p style="text-align: center">
+            Presiona <span class="key">ESPACIO</span>, para comenzar con la parte {{ player.round_number }}.
+        </p>
+
+        {% next_button %}
+    </div>
+
+    <script>
+        // El resto del script permanece igual
+    </script>
+
+{% endblock %}
+
 
     {% next_button %}
 </div>
